@@ -32,7 +32,7 @@ func main() {
 
 	// authz: only allowed with the perm of "read:todos"
 	http.Handle("/api/todos",
-		authn(authz("read:todos", http.HandlerFunc(listTodos))))
+		authn(authz(permReadTodo, http.HandlerFunc(listTodos))))
 
 	// protected resource, dump the access_token
 	http.Handle("/api/token", authn(http.HandlerFunc(parseToken)))
@@ -81,7 +81,8 @@ const (
 	contextKeyPerm = "perms"
 
 	// wildcard perm which can do anything
-	doAnythingPerm = "*:*"
+	permDoAnything = "*:*"
+	permReadTodo   = "read:todos"
 )
 
 // the authentication middleware to verify the access_token issued by AS
@@ -136,7 +137,7 @@ type perms []string
 
 func (p perms) grant(needs string) bool {
 	for _, v := range p {
-		if v == needs || v == doAnythingPerm {
+		if v == needs || v == permDoAnything {
 			return true
 		}
 	}
