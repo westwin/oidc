@@ -1,0 +1,5 @@
+bin/
+.dockerfile-*
+.container-*
+__debug_bin
+.history/
