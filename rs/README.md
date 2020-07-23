@@ -16,9 +16,6 @@ From the payload of the access_token, RS can tell:
 3. iss: who issued the access_token, usually it's the id(or FQDN) of the AS
 4. perms: the granted permissions for the sub
 
-NOTE: the access_token does not contains the detailed userinfo of the sub, if you needs detailed userinfo,
-use the access_token to call /userinfo endpoint of AS.(TBD)
-
 ## How to Run
 
 1. go run main.go
