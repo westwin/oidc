@@ -32,13 +32,7 @@ func main() {
 
 	// authz: only allowed with the perm of "read:todos"
 	http.Handle("/api/todos",
-		authn(authz(permReadTodo, http.HandlerFunc(listTodos))))
-
-	// protected resource, dump the access_token
-	http.Handle("/api/token", authn(http.HandlerFunc(parseToken)))
-
-	// protected resource, call AS api to return userinfo with access_token
-	http.Handle("/api/userinfo", authn(http.HandlerFunc(userinfo)))
+		cors(authn(authz(permReadTodo, http.HandlerFunc(listTodos)))))
 
 	http.ListenAndServe(addr, nil)
 }
@@ -68,14 +62,6 @@ func listTodos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func parseToken(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "token info, todo")
-}
-
-func userinfo(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "user info, todo")
-}
-
 const (
 	// context key for perms of an authenticated subject
 	contextKeyPerm = "perms"
@@ -85,9 +71,25 @@ const (
 	permReadTodo   = "read:todos"
 )
 
+func cors(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 // the authentication middleware to verify the access_token issued by AS
 func authn(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		// extract the access_token as a Bearer token
 		s := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
 		if len(s) != 2 {
@@ -101,7 +103,7 @@ func authn(next http.Handler) http.Handler {
 
 		// todo, extract the perms and propogate into context
 		p := []string{
-			doAnythingPerm,
+			permDoAnything,
 		}
 		ctx := context.WithValue(r.Context(), contextKeyPerm, perms(p))
 
@@ -112,6 +114,11 @@ func authn(next http.Handler) http.Handler {
 // the authorization middleware to verify the perms
 func authz(needs string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		v := r.Context().Value(contextKeyPerm)
 
 		if v == nil {
