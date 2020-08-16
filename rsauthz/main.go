@@ -23,10 +23,12 @@ func main() {
 		fmt.Printf("parse sig key err: %v\n", err)
 	}
 
+	/**
 	_, err = fetchJWKSFromWellKnown()
 	if err != nil {
 		fmt.Printf("parse sig key err: %v\n", err)
 	}
+	*/
 
 	yufuAT, err := verifyAccessToken()
 	if err != nil {
@@ -204,7 +206,12 @@ func verifyAccessToken() (jwt.Token, error) {
 		return nil, err
 	}
 
+	/**
+	aaa, _ := yufuAT.(openid.Token)
+	fmt.Printf("preferred_username: %s\n", aaa.PreferredUsername())
+
 	fmt.Printf("aud: %v\n", yufuAT.Audience())
+	*/
 
 	checkers := []func() error{
 		func() error {
