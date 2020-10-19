@@ -9,7 +9,7 @@ The code will demo the [Authorization Flow](https://docs.qq.com/doc/DSEN0SlhZWWF
 ## Dependencies
 
 1. JDK 1.8
-2. nimbus-jose-jwt 7.1
+2. nimbus-jose-jwt 7.9
 
 ## How to Run
 
