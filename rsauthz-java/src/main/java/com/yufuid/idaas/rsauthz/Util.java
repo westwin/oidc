@@ -106,7 +106,6 @@ public class Util {
         jwtProcessor.setJWSKeySelector(keySelector);
 
         // Set the required JWT claims for access tokens issued by YuFu
-
         jwtProcessor.setJWTClaimsSetVerifier(new YuFuAccessTokenVerifier(iss, azp, clockSkew));
         // Process the token
         SecurityContext ctx = null; // optional context parameter, not required here
