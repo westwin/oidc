@@ -13,5 +13,5 @@ The code will demo the [Authorization Flow](https://docs.qq.com/doc/DSEN0SlhZWWF
 
 ## How to Run
 
-1. find the main() in Demo.java
+1. find the main() in Main.java
 2. contact YuFu admin to get the .well-known URL and other necessary params
