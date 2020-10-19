@@ -1,0 +1,9 @@
+.idea
+*.iml
+target
+dependency-reduced-pom.xml
+*/.DS_store
+node_modules
+!/.idea/codeStyleSettings.xml
+.arclib/.phutil_module_cache
+tmp/
